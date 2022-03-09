@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+# Tool Title: GetPorts
+# Date: 09-03-2022
+# Author: danielprz21
+# HTB:  https://app.hackthebox.com/profile/730318
+# Description: Get all XML Nmap ports in the console, and copy to the clipboard   
+# Version: 1.0
+# Lang: Python v3
+# Tested on: Kali Linux / Windows 11
+from xml.dom import minidom
+import sys
+import pyperclip
+
+
+def main(file):
+    if str(type(open(file))) != "<class '_io.TextIOWrapper'>":
+        raise Exception()
+    plainPorts = " "
+    nmapResult = minidom.parse(file)
+    return getPorts(plainPorts, nmapResult), getIP(nmapResult)
+
+
+def getPorts(plainPorts, nmapResult):
+    ports = nmapResult.getElementsByTagName('port')
+    for p in ports:
+        plainPorts = plainPorts + ","+p.attributes['portid'].value
+    return plainPorts
+
+
+def getIP(nmapResult):
+    ip = nmapResult.getElementsByTagName('address')
+    ip = ip[0].attributes['addr'].value
+    return ip
+
+
+if __name__ == "__main__":
+    try:
+        if len(sys.argv) == 2:
+            text = "{}\n".format(main(sys.argv[1])[0][2:len(
+                main(sys.argv[1])[0])])
+            print("\nPORTS: {}".format(text))
+            pyperclip.copy(text)
+
+        elif len(sys.argv) == 1:
+            print("\n[!] USE: python3 " + sys.argv[0] + " <xml-File>\n")            
+    except KeyboardInterrupt:
+        print("\n[!] Stopping...")
+        sys.exit(1)
+    except:
+        print("\n[!]The file you are trying to pass is not XML")
+    
