@@ -3,7 +3,7 @@
 # Date: 09-03-2022
 # Author: danielprz21
 # HTB:  https://app.hackthebox.com/profile/730318
-# Description: get all NMAP ports from XML reports & Copy to the clipboard   
+# Description: Get all XML Nmap ports in the console, and copy to the clipboard   
 # Version: 1.0
 # Lang: Python v3
 # Tested on: Kali Linux / Windows 11
@@ -42,10 +42,10 @@ if __name__ == "__main__":
             pyperclip.copy(text)
 
         elif len(sys.argv) == 1:
-            print("\n[!] USE: python3 " + sys.argv[0] + " <xml-File>\n")            
+            print("\n[!] USE: " + sys.argv[0] + " <xml-File>\n")            
     except KeyboardInterrupt:
         print("\n[!] Stopping...")
         sys.exit(1)
     except:
-        print("\n[!]The file you are trying to pass is not XML")
+        print("\n[!]The file you are trying to scan is not XML")
     
