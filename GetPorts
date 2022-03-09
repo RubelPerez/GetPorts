@@ -3,7 +3,7 @@
 # Date: 09-03-2022
 # Author: danielprz21
 # HTB:  https://app.hackthebox.com/profile/730318
-# Description: Get all XML Nmap ports in the console, and copy to the clipboard   
+# Description: get all NMAP ports from XML reports & Copy to the clipboard   
 # Version: 1.0
 # Lang: Python v3
 # Tested on: Kali Linux / Windows 11
