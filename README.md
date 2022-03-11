@@ -20,9 +20,11 @@ if you just write GetPorts in a console, you will receive:
 Asking for a **XML File** as a parameter
 
 If the XML file is valid, you will see the result
+
 ![Tux, the Linux mascot](/resources/GetPorts3.gif)
 
 When is not a valid XML, you will see:
+
 ![Tux, the Linux mascot](/resources/GetPorts4.png)
 
 **You MUST be SUDO to run this script.**
