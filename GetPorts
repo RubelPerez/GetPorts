@@ -4,8 +4,8 @@
 # Author: danielprz21
 # HTB:  https://app.hackthebox.com/profile/730318
 # Description: Get all XML Nmap ports in the console, and copy to the clipboard   
-# Version: 1.0
-# Lang: Python v3
+# Version: 1.1
+# Lang: Python 3
 # Tested on: Kali Linux / Windows 11
 from xml.dom import minidom
 import sys
@@ -17,7 +17,7 @@ def main(file):
         raise Exception()
     plainPorts = " "
     nmapResult = minidom.parse(file)
-    return getPorts(plainPorts, nmapResult), getIP(nmapResult)
+    return getPorts(plainPorts, nmapResult)
 
 
 def getPorts(plainPorts, nmapResult):
@@ -26,18 +26,10 @@ def getPorts(plainPorts, nmapResult):
         plainPorts = plainPorts + ","+p.attributes['portid'].value
     return plainPorts
 
-
-def getIP(nmapResult):
-    ip = nmapResult.getElementsByTagName('address')
-    ip = ip[0].attributes['addr'].value
-    return ip
-
-
 if __name__ == "__main__":
     try:
         if len(sys.argv) == 2:
-            text = "{}\n".format(main(sys.argv[1])[0][2:len(
-                main(sys.argv[1])[0])])
+            text = main(sys.argv[1])[2:]
             print("\nPORTS: {}".format(text))
             pyperclip.copy(text)
 
