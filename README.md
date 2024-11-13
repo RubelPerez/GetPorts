@@ -1,7 +1,7 @@
 # GetPorts
 ---
 ## Description
-GetPorts is a tool developed in Python 3, intended to collect all the ports of an XML report after a NMAP scan.
+GetPorts is a tool developed in Python 3, intended to collect all the ports of an file report after a NMAP scan.
 
 Besides, it copies them to the clipboard making easier the task, when a machine has many ports open. just use **CTRL + V**
 
@@ -17,13 +17,13 @@ if you just write GetPorts in a console, you will receive:
 
 ![Tux, the Linux mascot](/resources/GetPorts1.png)
 
-Asking for a **XML File** as a parameter
+Asking for a **File** as a parameter
 
-If the XML file is valid, you will see the result
+If the file is valid, you will see the result
 
 ![Tux, the Linux mascot](/resources/GetPorts3.gif)
 
-When is not a valid XML, you will see:
+When is not a valid file, you will see:
 
 ![Tux, the Linux mascot](/resources/GetPorts4.png)
 
