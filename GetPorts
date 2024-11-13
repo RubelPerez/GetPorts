@@ -3,41 +3,122 @@
 # Date: 09-03-2022
 # Author: danielprz21
 # HTB:  https://app.hackthebox.com/profile/730318
-# Description: Get all XML Nmap ports in the console, and copy to the clipboard   
+# Description: Get all XML Nmap ports in the console, and copy to the clipboard
 # Version: 1.1
 # Lang: Python 3
 # Tested on: Kali Linux / Windows 11
-from xml.dom import minidom
+
 import sys
+import re
 import pyperclip
 
 
-def main(file):
-    if str(type(open(file))) != "<class '_io.TextIOWrapper'>":
-        raise Exception()
-    plainPorts = " "
-    nmapResult = minidom.parse(file)
-    return getPorts(plainPorts, nmapResult)
+def detect_format(file):
+    try:
+        format_detected = ""
+        with open(file, 'r') as archivo:
+            first_line = archivo.readline().strip().lower()
+            # Detectar formato por contenido
+            if first_line.startswith("<?xml"):
+                format_detected = "xml"
+            if first_line.startswith("# nmap") and "-og" in first_line:
+                format_detected = "grepable"
+            if first_line.startswith("{"):
+                format_detected = "json"
+            if first_line.startswith("# nmap") and "-on" in first_line:
+                format_detected = "normal format"
+            if first_line.startswith("starting nmap"):
+                format_detected = "script kiddies"
+            print("\n[!] Detected Format:", format_detected, "\n")
+            return format_detected
+    except FileNotFoundError:
+        return "The file doesnt exist."
+    except Exception as e:
+        return f"Error reading file: {e}"
 
 
-def getPorts(plainPorts, nmapResult):
-    ports = nmapResult.getElementsByTagName('port')
-    for p in ports:
-        plainPorts = plainPorts + ","+p.attributes['portid'].value
-    return plainPorts
+def extact_ports(file):
+    format_result = detect_format(file)
+    ports = ""
+    if format_result == "xml":
+        ports = extract_xml(file)
+    if format_result == "grepable":
+        ports = extract_grepeable(file)
+    if format_result == "json":
+        ports = extract_json(file)
+    if format_result == "normal format":
+        ports = extract_normal(file)
+    if format_result == "script kiddies":
+        ports = extract_scriptkiddie(file)
+    if format_result == "Unknown format":
+        raise Exception
+
+
+def open_file(file_to_work):
+    with open(file_to_work, 'r') as f:
+        file_content = f.read()
+    return file_content
+
+
+def extract_xml(file_to_extract_ports):
+    file_data = open_file(file_to_extract_ports)
+    ports = re.findall(r'<port[^>]*portid="(\d+)"', file_data)
+    print_result(ports)
+
+
+def extract_grepeable(file_to_extract_ports):
+    file_data = open_file(file_to_extract_ports)
+    ports = re.findall(r'(\d+)/open/tcp', file_data)
+    print_result(ports)
+
+
+def extract_json(file_to_extract_ports):
+    file_data = open_file(file_to_extract_ports)
+    ports = re.findall(r'(\d+)/open/tcp', file_data)
+    print_result(ports)
+
+
+def extract_normal(file_to_extract_ports):
+    file_data = open_file(file_to_extract_ports)
+    ports = re.findall(r'(\d+)/tcp\s+open', file_data)
+    print_result(ports)
+
+
+def extract_scriptkiddie(file_to_extract_ports):
+    file_data = open_file(file_to_extract_ports)
+    ports = re.findall(r'(\d+)\s*/\s*tcp\s*[^o0]*[o0][^p1]*[p3][^e3]*[e3][^n4]*[n4]', file_data, re.IGNORECASE)
+    print_result(ports)
+
+
+def invalid_format():
+    pass
+
+
+def print_result(ports):
+    ports = ','.join(ports)
+    print("\n[!] Ports:", ports)
+    copy_to_clipboard(ports)
+    print("\n[!] Copied to clipboard")
+
+
+def copy_to_clipboard(text):
+    try:
+        pyperclip.copy(text)
+    except Exception as ex:
+        print(ex)
+        raise ex
+
 
 if __name__ == "__main__":
     try:
         if len(sys.argv) == 2:
-            text = main(sys.argv[1])[2:]
-            print("\nPORTS: {}".format(text))
-            pyperclip.copy(text)
-
-        elif len(sys.argv) == 1:
-            print("\n[!] USE: " + sys.argv[0] + " <xml-File>\n")            
+            file = sys.argv[1]
+            extact_ports(file)
+        elif len(sys.argv) < 2 or len(sys.argv) > 2:
+            print("\n[!] USE: " + sys.argv[0] + " File\n")
+            sys.exit(1)
     except KeyboardInterrupt:
         print("\n[!] Stopping...")
         sys.exit(1)
-    except:
-        print("\n[!]The file you are trying to scan is not XML")
-    
+    except Exception as ex:
+        print("[!!!]", ex)
